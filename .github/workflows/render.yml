@@ -3,34 +3,27 @@ name: Render Manim Video
 on:
   push:
     paths:
-      - 'example.py'     # Tự động chạy khi file này thay đổi
+      - 'example.py'
       - '.github/workflows/render.yml'
-      - 'requirements.txt'
 
 jobs:
   render:
     runs-on: ubuntu-latest
+    name: Render Manim with Action
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Render video with Manim Action
+        uses: manim-kindergarten/manim_action_renderer@master
         with:
-          python-version: '3.10'
+          source_file: example.py
+          scene_names: HelloWorld
+          args: -pql
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Render video
-        run: |
-          manim example.py SceneName -pql
-          
-      - name: Upload video as artifact
+      - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rendered-video
+          name: manim-video
           path: media/videos/
